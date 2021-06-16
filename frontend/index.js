@@ -480,6 +480,13 @@ const converters = [
             return `https://${match[1]}.google.com/${match[2]}/d/${match[3]}/preview`;
         }
 
+        const nonSpecificMatch = url.match(
+            /(docs|drive)\.google\.com\/uc\?id=([\w-]+)/,
+        );
+        if (match) {
+            return `https://${nonSpecificMatch[1]}.google.com/file/d/${match[2]}/preview`;
+        }
+
         // Google Drive folders have a different format and embed URL.
         const driveMatch = url.match(/drive\.google\.com\/drive\/folders\/([\w-]+)/);
         if (driveMatch) {

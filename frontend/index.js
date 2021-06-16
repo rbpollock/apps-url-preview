@@ -483,7 +483,7 @@ const converters = [
         const nonSpecificMatch = url.match(
             /(docs|drive)\.google\.com\/uc\?id=([\w-]+)/,
         );
-        if (match) {
+        if (nonSpecificMatch) {
             return `https://${nonSpecificMatch[1]}.google.com/file/d/${match[2]}/preview`;
         }
 

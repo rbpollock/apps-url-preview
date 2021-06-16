@@ -337,7 +337,7 @@ function RecordPreview({
             if (!previewUrl) {
                 return (
                     <Fragment>
-                        <Text>No preview</Text>
+                        <Text>{selectedRecordId}</Text>
                         {viewSupportedURLsButton}
                     </Fragment>
                 );

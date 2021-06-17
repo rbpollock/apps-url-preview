@@ -64,6 +64,11 @@ function SettingsForm({setIsSettingsOpen}) {
                             globalConfigKey={ConfigKeys.URL_FIELD_ID}
                             allowedTypes={allowedUrlFieldTypes}
                         />
+                        <FieldPickerSynced
+                            table={urlTable}
+                            globalConfigKey={ConfigKeys.URL_FIELD_ID2}
+                            allowedTypes={allowedUrlFieldTypes}
+                        />
                     </FormField>
                 )}
             </Box>

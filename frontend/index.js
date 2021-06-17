@@ -251,7 +251,7 @@ function RecordPreview({
     setIsSettingsOpen,
 }) {
     const {
-        settings: {isEnforced, urlField, urlTable},
+        settings: {isEnforced, urlField, urlTable, urlField2},
     } = useSettings();
 
     const table = (isEnforced && urlTable) || activeTable;
@@ -261,10 +261,11 @@ function RecordPreview({
     // When using a specific field for previews is enabled and that field exists,
     // use the selectedField
     const previewField = (isEnforced && urlField) || selectedField;
+    const previewField2 = (isEnforced && urlField2) || selectedField;
     // Triggers a re-render if the record changes. Preview URL cell value
     // might have changed, or record might have been deleted.
     const selectedRecord = useRecordById(table, selectedRecordId ? selectedRecordId : '', {
-        fields: [previewField],
+        fields: [previewField, previewField2],
     });
 
     // Triggers a re-render if the user switches table or view.
@@ -320,6 +321,7 @@ function RecordPreview({
         // we use getCellValue, we might get back numbers, booleans, or
         // arrays depending on the field type.
         const cellValue = selectedRecord.getCellValueAsString(previewField);
+        const cellValue2 = selectedRecord.getCellValueAsString(previewField2);
 
         if (!cellValue) {
             return (
@@ -330,6 +332,7 @@ function RecordPreview({
             );
         } else {
             const previewUrl = getPreviewUrlForCellValue(cellValue);
+            const previewUrl2 = getPreviewUrlForCellValue(cellValue2);
 
             // In this case, the FIELD_NAME field of the currently selected
             // record either contains no URL, or contains a that cannot be
@@ -337,12 +340,13 @@ function RecordPreview({
             if (!previewUrl) {
                 return (
                     <Fragment>
-                        <Text>{selectedRecordId}</Text>
+                        <Text>No preview</Text>
                         {viewSupportedURLsButton}
                     </Fragment>
                 );
             } else {
                 return (
+                    <Fragment>
                     <iframe
                         // Using `key=previewUrl` will immediately unmount the
                         // old iframe when we're switching to a new
@@ -357,6 +361,21 @@ function RecordPreview({
                         allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
                         allowFullScreen
                     />
+                    <iframe
+                        // Using `key=previewUrl` will immediately unmount the
+                        // old iframe when we're switching to a new
+                        // preview. Otherwise, the old iframe would be reused,
+                        // and the old preview would stay onscreen while the new
+                        // one was loading, which would be a confusing user
+                        // experience.
+                        key={previewUrl2}
+                        style={{flex: 'auto', width: '100%'}}
+                        src={previewUrl2}
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                    />
+                    </Fragment>
                 );
             }
         }
@@ -484,7 +503,7 @@ const converters = [
             /(docs|drive)\.google\.com\/uc\?id=([\w-]+)/,
         );
         if (nonSpecificMatch) {
-            return `https://${nonSpecificMatch[1]}.google.com/file/d/${match[2]}/preview`;
+            return `https://${nonSpecificMatch[1]}.google.com/file/d/${nonSpecificMatch[2]}/preview`;
         }
 
         // Google Drive folders have a different format and embed URL.
